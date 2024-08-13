@@ -143,3 +143,38 @@ class MazeGame:
         maze[self.heigh - 2][self.width - 1] = 0 #Exit
 
         return maze
+    
+
+    def draw_maze(self):
+        """
+        Draws the generated maze onto the Tkinter canvas.
+
+        This method iterates over the 2D list representing the maze and draws each cell as a
+        rectangle on the canvas. The color of the rectangle is determined by whether the cell is
+        a path or a wall. The method also draws the entrance and exit of the maze with distinct colors.
+        """
+
+        for y in range(len(self.maze)):
+            for x in range(len(self.maze)):
+                color = "white" if self.maze[y][x] == 0 else "black" #Path or wall
+                self.canvas.create_rectangle(
+                    x * self.cell_size,
+                    y * self.cell_size,
+                    (x + 1) * self.cell_size,
+                    (y + 1) * seld.cell_size,
+                    fill=color,
+                )
+
+        #Draw the entrace
+        self.canvas.create_rectangle(
+            0, self.cell_size, self.cell_size, 2 * self.cell_size, fill = "green"
+        )
+
+        #Draw the exit
+        self.canvas.create_rectangle(
+            (self.width - 1) * self.cell_size,
+            (self.height - 2) * self.cell_size,
+            self.width * self.cell_size,
+            (self.height - 1) * self.cell_size,
+            fill = "red",
+        )
