@@ -211,6 +211,33 @@ class MazeGame:
         )
 
     def draw_player(self):
+        """
+        Draws the player on the Tkinter canvas. 
+
+        This method places a visual representation of the player at the current position on the canvas.
+        The player is drawn as a blue rectangle, and it is tagged with "player" for easy identification and manipulation. 
+
+        Process:
+            1. Retrieve the current position of the player from 'self.player_pos'.
+            2. Calculate the top-left and bottom-right coordinates of the rectangle representing the player based on the
+                player's position and the cell size. 
+            3. Draw a blue rectangle at the calculated coordinates on the canvas.
+            4. Assign the tag "player" to the rectangle, which allows for easy manipulation or identification later. 
+        
+        Canvas Coordinates:
+            - The top-left corner of the player rectangle is calculated as `(x * self.cell_size, y * self.cell_size)`.
+            - The bottom-right corner of the player rectangle is calculated as `((x + 1) * self.cell_size, (y + 1) * self.cell_size)`.
+
+        Notes:
+            - The `self.player_pos` attribute should contain the current (x, y) position of the player in the maze.
+            - If the player is moved or if the maze is redrawn, this method should be called to update the player's position on the canvas.
+            - The "player" tag allows for potential future use cases, such as moving or updating the player's position on the canvas.
+
+        Example:
+            If `self.player_pos` is `[2, 3]` and `self.cell_size` is `20`, the player will be drawn as a blue rectangle
+            from `(40, 60)` to `(60, 80)` on the canvas.
+            
+        """
         x, y = self.player_pos
         self.canvas.create_rectangle(
             x * self.cell_size,
