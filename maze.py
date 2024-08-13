@@ -51,4 +51,22 @@ class MazeGame:
         #Creating and packing buttons for different pathfinding algorithms 
         self.canvas.pack()
         self.dfs_button = tk.Button(self.root, text="DFS", command = self.dfs_bot)
-        self.dfs_button.pack(side=tk.LEFT, padx = 5, pady = 5         )
+        self.dfs_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+        self.bfs_button = tk.Button(self.root, text="BFS", command = self.bfs_bot)
+        self.bfs_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+        self.dijkstra_button = tk.Button(
+            self.root, text = "Dijkstra", command=self.dijkstra_bot
+        )
+        self.dijkstra_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+        self.a_star_button = tk.Button(
+            self.root, text = "A* Algorithm", command = self.a_star_bot
+        )
+        self.a_star_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+
+        #Drawing the maze and player on the canvas 
+        self.draw_maze() #Draw the maze on the canvas
+        self.draw_player() # Draw the player on the canvas 
+
+        #Bind key press events to move the player
+        self.root.bind("<KeyPress>", self.move_player)
+        self.root.mainloop() # Start the Tkinter event loop
