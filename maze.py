@@ -236,8 +236,9 @@ class MazeGame:
         Example:
             If `self.player_pos` is `[2, 3]` and `self.cell_size` is `20`, the player will be drawn as a blue rectangle
             from `(40, 60)` to `(60, 80)` on the canvas.
-            
+
         """
+
         x, y = self.player_pos
         self.canvas.create_rectangle(
             x * self.cell_size,
@@ -247,3 +248,62 @@ class MazeGame:
             fill = "blue",
             tags = "players",
         )
+
+    def move_player(self, event):
+        """
+        Moves the player on the canvas based on keyboard input.
+
+        This method is triggered by key press events and updates the player's position on the canvas accordingly.
+        It also handles checking if the new position is valid (i.e., within maze boundaries and not a wall),
+        updates the visited paths, and checks for a win condition.
+
+        Parameters:
+            event (tk.Event): The Tkinter event object containing information about the key press.
+
+        Process:
+            1. Retrieve the direction of movement based on the key pressed. `MOVE_DIRS` maps key symbols to movement offsets (dx, dy).
+            2. Calculate the new position `(new_x, new_y)` by adding the direction offsets to the current player position.
+            3. Check if the new position is within the maze boundaries and is a path (value of 0 in `self.maze`).
+            4. If the new position is valid:
+                - Mark the current position as visited by adding it to `self.visited`.
+                - Update the player's position to the new coordinates.
+                - Remove the previous player representation from the canvas.
+                - Redraw the player at the new position.
+                - Update the visualization of visited paths.
+                - Check for a win condition (if the player reaches the exit) and display a "You Win!" message.
+
+        Notes:
+            - The `event.keysym` attribute provides the symbol of the key pressed, which is used to determine the direction of movement.
+            - The `MOVE_DIRS` dictionary should be defined elsewhere in the class, mapping key symbols (e.g., "Up", "Down", "Left", "Right") to movement offsets.
+            - The win condition is checked by comparing the player's position with the exit coordinates.
+
+        Example:
+            If the `event.keysym` is "Right" and `MOVE_DIRS` is set such that "Right" maps to `(1, 0)`, the player will move one cell to the right.
+        
+        """
+
+        dx, dy = MOVE_DIRS.get(event.keysym, (0,0)) #Get the direction of movement
+        new_x = self.player_pos[0] + dx
+        new_y = self.player_pos[1] + dy
+
+        #Check if the new position is within the bounds and is the path
+        if (
+            0 <= new_x < self.width
+            and 0 <= new_y < self.height
+            and self.maze[new_y][new_x] == 0
+        ):
+            self.visited.add(tuple(self.player_pos))  # Mark current position as visited
+            self.player_pos = [new_x, new_y]  # Update player position
+            self.canvas.delete("player")  # Remove the old player position
+            self.draw_player()  # Draw the new player position
+            self.update_visited_paths()  # Update the visited paths
+
+            # Check for win condition
+            if new_x == self.width - 1 and new_y == self.height - 2:
+                self.canvas.create_text(
+                    self.width * self.cell_size / 2,
+                    self.height * self.cell_size / 2,
+                    text="You Win!",
+                    fill="yellow",
+                    font=("Helvetica", 24),
+                )
