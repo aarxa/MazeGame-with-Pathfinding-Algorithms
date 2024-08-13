@@ -86,10 +86,27 @@ class MazeGame:
         - '1' represents a wall. 
 
         Returns:
+            list[list[int]]: A 2D list representing the generated maze. Each cell in the maze
+            is either a `0` (path) or `1` (wall).
 
         Algorithm:
+            1. Initialize the maze grid with walls (`1`).
+            2. Set the starting position at `(1, 1)` as a path (`0`).
+            3. Use a stack to keep track of the current path.
+            4. Shuffle possible directions to ensure randomness.
+            5. For each position:
+                - Check the unvisited neighboring cells.
+                - If there are unvisited neighbors, randomly select one, mark it as a path,
+                  and remove the wall between the current cell and the neighbor.
+                - If no unvisited neighbors are available, backtrack by popping the stack.
+            6. Ensure there is an entrance at `(1, 0)` and an exit at `(self.height - 2, self.width - 1)`.
+            7. Return the generated maze.
 
         Notes:
+            - The maze is guaranteed to have at least one path from the entrance to the exit.
+            - The `DIRS` variable should be defined elsewhere in the code, typically as a list of possible directions
+              [(0, 1), (1, 0), (0, -1), (-1, 0)] representing right, down, left, and up, respectively.
+
         """
 
         maze = [
