@@ -70,3 +70,59 @@ class MazeGame:
         #Bind key press events to move the player
         self.root.bind("<KeyPress>", self.move_player)
         self.root.mainloop() # Start the Tkinter event loop
+
+
+    def create_maze(self):
+        """
+        Generates a random maze using the Depth-First Search (DFS) algorithm.
+
+        This method initializes a maze grid where all cells are initially walls. It then
+        uses a stack-based approach to create a path through the maze. The path is created 
+        by randomly selecting neighboring cells, marking them as part of the path, and 
+        removing walls between cells. The maze is ensured to have an entrance and an exit.
+
+        The resulting maze is a 2D list where:
+        - '0' represents a path. 
+        - '1' represents a wall. 
+
+        Returns:
+
+        Algorithm:
+
+        Notes:
+        """
+
+        maze = [
+            [1 for _ in range(self.width)] for _ in range(self.height)
+        ] # Start with walls everywhere
+        stack = [(1,1)] # Stack to keep track of the current path
+        maze[1][1] = 0 #Starting point
+
+        while stack:
+            x, y = stack[-1] #Get the current position
+
+            #Shuffle the directions to randomize the path
+            random.shuffle(DIRS)
+
+            #Get the list of unvisited neighbors
+            neighbors = [
+                (x + dx, y + dy)
+                for dx, dy in DIRS
+                if 0 < x + dx < self.width - 1
+                and 0 < y + dy < self.height - 1
+                and maze[y + dy][x + dx] == 1
+            ]
+
+            if neighbors:
+                nx, ny = random.choice(neighbors) #Choose a random neighbor
+                stack.append((nx, ny)) #Add the neighbor to the stack
+                maze[ny][nx] = 0 #Mark the neighbor as a path
+                maze [ny - (ny - y) // 2][nx - (nx - x) // 2] #Remove all wall between cells
+            else:
+                stack.pop() #Backtrack if no unvisited neighbors
+        
+        #Ensuring there is a path from the start to the end
+        maze[1][0] = 0 #Entrace
+        maze[self.heigh - 2][self.width - 1] = 0 #Exit
+
+        return maze
