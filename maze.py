@@ -209,3 +209,14 @@ class MazeGame:
             (self.height - 1) * self.cell_size,
             fill = "red",
         )
+
+    def draw_player(self):
+        x, y = self.player_pos
+        self.canvas.create_rectangle(
+            x * self.cell_size,
+            y * self.cell_size,
+            (x + 1) * self.cell_size,
+            (y + 1) * self.cell_size,
+            fill = "blue",
+            tags = "players",
+        )
