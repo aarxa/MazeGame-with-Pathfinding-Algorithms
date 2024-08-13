@@ -20,6 +20,13 @@ class MazeGame:
     and provides various algorithms to find a path through the maze. It supports Depth-First Search (DFS), 
     Breath-First Search (BFS), Dijkstra's Algorithm, and A* Algorithm for pathfinding. The player can move
     within the maze using keyboard controls. 
+
+    Attributes:
+        width (int): The width of the maze in cells.
+        height (int): The height of the maze in cells.
+        cell_size (int): The size of each cell in pixels.
+        maze (list[list[int]]): 2D list representing the maze grid (0 for open path, 1 for wall).
+
     """
 
     def __init__(self, width, height, cell_size):
@@ -152,6 +159,30 @@ class MazeGame:
         This method iterates over the 2D list representing the maze and draws each cell as a
         rectangle on the canvas. The color of the rectangle is determined by whether the cell is
         a path or a wall. The method also draws the entrance and exit of the maze with distinct colors.
+
+        The maze is visualized as follows:
+        - `0` (path) is drawn in white.
+        - `1` (wall) is drawn in black.
+        - The entrance is marked in green.
+        - The exit is marked in red.
+
+        Process:
+            1. Iterate through each cell in the maze.
+                - For each cell, determine its color based on its value (`0` or `1`).
+                - Draw a rectangle representing the cell at the appropriate position on the canvas.
+            2. Draw a green rectangle to represent the entrance of the maze.
+            3. Draw a red rectangle to represent the exit of the maze.
+
+        Canvas Coordinates:
+            - The top-left corner of the canvas is at (0, 0).
+            - Each cell's position is calculated based on its index in the maze and the cell size.
+            - The entrance is drawn at the top-left corner.
+            - The exit is drawn at the bottom-right corner.
+
+        Notes:
+            - The canvas is assumed to be initialized with dimensions large enough to accommodate the entire maze.
+            - The entrance and exit rectangles are hardcoded to specific sizes and positions based on the cell size.
+
         """
 
         for y in range(len(self.maze)):
