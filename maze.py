@@ -369,6 +369,34 @@ class MazeGame:
 
 
     def clear_search_paths(self):
+        """
+        Clears the canvas of all search path indicators and redraws the maze.
+
+        This method is used to remove any temporary visual markers indicating search paths
+        from the canvas. It iterates over the entire maze and resets the color of cells
+        that were previously marked during a search algorithm (e.g., A* or BFS). The maze
+        is then redrawn with its original appearance, including the entrance and exit.
+
+        Process:
+            1. Iterate through each cell in the maze.
+            2. For cells that are part of the maze path (indicated by a value of 0 in `self.maze`),
+               reset their color to white, which represents an open path.
+            3. Redraw the entrance of the maze at the top-left corner in green.
+            4. Redraw the exit of the maze at the bottom-right corner in red.
+
+        Notes:
+            - This method is typically called to reset the visual representation of the maze
+              after a search algorithm has been executed and its path markers need to be cleared.
+            - The entrance is drawn as a green rectangle, and the exit is drawn as a red rectangle.
+            - The `self.maze` attribute represents the maze layout, where 0 denotes open paths
+              and 1 denotes walls.
+
+        Example:
+            If the maze had previously indicated search paths with yellow cells, calling this
+            method will clear those indications and reset the maze to its original state with
+            white paths, green entrance, and red exit.
+        """
+        
         # Clear all yellow cells indicating the search paths
         for y in range(len(self.maze)):
             for x in range(len(self.maze[0])):
