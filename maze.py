@@ -310,6 +310,40 @@ class MazeGame:
 
 
     def update_visited_paths(self):
+        """
+        Updates the canvas to reflect the visited paths and redraw the player.
+
+        This method is responsible for visualizing the cells that the player has visited
+        by updating their appearance on the canvas. It first removes the player from the canvas
+        to ensure that it is redrawn on top of the visited paths. Then, it iterates through
+        the set of visited positions and updates their appearance. Finally, the player is
+        redrawn at its current position.
+
+        Process:
+            1. Remove the existing player representation from the canvas to ensure it is not
+               obscured by the visited path drawings.
+            2. Iterate over the positions stored in `self.visited` and draw each visited cell
+               with a specified color to indicate that it has been traversed.
+            3. Redraw the player at its current position to ensure it is visible above the
+               visited paths.
+
+        Notes:
+            - `self.visited` should be a set of tuples where each tuple represents a
+              (x, y) coordinate of a cell that has been visited by the player.
+            - The `fill_color` used for visited paths is set to "light green".
+            - The player is always drawn with a "blue" fill color.
+            - The player must be redrawn after the visited paths to ensure it is not covered.
+
+        Example:
+            If the player has visited the cells at coordinates (1, 1) and (2, 2),
+            these cells will be drawn with a "light green" color, and the player
+            will be drawn with a "blue" color at its current position.
+        """
+
+        self.canvas.delete(
+            "player"
+        )  # Remove the player to redraw it on top if necessary
+        
          # First redraw all visited paths
         for pos in self.visited:
             x, y = pos
