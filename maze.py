@@ -522,4 +522,10 @@ class MazeGame:
 
         step()
     
-    
+
+    def bfs_bot(self):
+
+        self.clear_search_paths()
+        start = (1, 1)
+        end = (self.width - 1, self.height - 2)
+        self.breadth_first_search(start, end)
