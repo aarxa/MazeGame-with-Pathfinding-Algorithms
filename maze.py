@@ -307,3 +307,28 @@ class MazeGame:
                     fill="yellow",
                     font=("Helvetica", 24),
                 )
+
+
+    def update_visited_paths(self):
+         # First redraw all visited paths
+        for pos in self.visited:
+            x, y = pos
+            fill_color = "light green"
+            self.canvas.create_rectangle(
+                x * self.cell_size,
+                y * self.cell_size,
+                (x + 1) * self.cell_size,
+                (y + 1) * self.cell_size,
+                fill=fill_color,
+            )
+
+        # Then redraw the player at its current position
+        x, y = self.player_pos
+        self.canvas.create_rectangle(
+            x * self.cell_size,
+            y * self.cell_size,
+            (x + 1) * self.cell_size,
+            (y + 1) * self.cell_size,
+            fill="blue",
+            tags="player",
+        )
