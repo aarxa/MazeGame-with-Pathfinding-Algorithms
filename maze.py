@@ -441,9 +441,48 @@ class MazeGame:
             Calling `dfs_bot()` will begin the DFS algorithm, updating the maze visualization
             with the path being explored and eventually finding the path to the exit if it exists.
         """
-        
+
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.depth_first_search(start, end)
 
+
+    def depth_first_search(self, start, end):
+        """
+        Performs Depth-First Search (DFS) to find a path from `start` to `end` in the maze.
+
+        This method performs the DFS algorithm to explore the maze and find a path from the
+        `start` position to the `end` position. As the search progresses, each visited cell is
+        painted in yellow to indicate the path being explored.
+
+        Parameters:
+            start (tuple): The starting position in the maze as (x, y).
+            end (tuple): The target position (exit) in the maze as (x, y).
+
+        Process:
+            1. Initialize a stack with the starting position and the current path.
+            2. Maintain a set of visited positions to avoid revisiting cells.
+            3. Use a recursive function `step` to handle the search process:
+                - If the stack is not empty, pop the current position and path.
+                - Paint the current cell in yellow and update the canvas.
+                - If the current position is the end, terminate the search.
+                - Otherwise, explore the neighboring cells by adding them to the stack if they
+                  are valid and not visited.
+                - Schedule the next step in the search process using `root.after`.
+
+        Notes:
+            - The recursive `step` function ensures the search progresses by periodically
+              updating the canvas and scheduling the next search step.
+            - Cells are painted yellow during the search to visually represent the exploration
+              process.
+            - The search continues until the exit is reached or all possible paths are explored.
+
+        Example:
+            If you call `depth_first_search((1, 1), (10, 10))`, the maze will be explored using DFS,
+            and the path will be visualized with yellow cells. If a path exists, it will be found
+            and displayed.
+        """
+        
+        stack = [(start, [start])]
+        visited = set()
