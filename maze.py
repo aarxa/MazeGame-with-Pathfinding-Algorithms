@@ -343,7 +343,7 @@ class MazeGame:
         self.canvas.delete(
             "player"
         )  # Remove the player to redraw it on top if necessary
-        
+
          # First redraw all visited paths
         for pos in self.visited:
             x, y = pos
@@ -365,4 +365,29 @@ class MazeGame:
             (y + 1) * self.cell_size,
             fill="blue",
             tags="player",
+        )
+
+
+    def clear_search_paths(self):
+        # Clear all yellow cells indicating the search paths
+        for y in range(len(self.maze)):
+            for x in range(len(self.maze[0])):
+                if self.maze[y][x] == 0:
+                    self.canvas.create_rectangle(
+                        x * self.cell_size,
+                        y * self.cell_size,
+                        (x + 1) * self.cell_size,
+                        (y + 1) * self.cell_size,
+                        fill="white",
+                    )
+        # Redraw the entrance and exit
+        self.canvas.create_rectangle(
+            0, self.cell_size, self.cell_size, 2 * self.cell_size, fill="green"
+        )
+        self.canvas.create_rectangle(
+            (self.width - 1) * self.cell_size,
+            (self.height - 2) * self.cell_size,
+            self.width * self.cell_size,
+            (self.height - 1) * self.cell_size,
+            fill="red",
         )
