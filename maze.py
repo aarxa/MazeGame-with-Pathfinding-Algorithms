@@ -483,6 +483,43 @@ class MazeGame:
             and the path will be visualized with yellow cells. If a path exists, it will be found
             and displayed.
         """
-        
+
         stack = [(start, [start])]
         visited = set()
+
+        def step():
+            if stack:
+                current, path = stack.pop()
+                if current in visited:
+                    self.root.after(50, step)
+                    return
+                visited.add(current)
+
+                # Paint the current cell
+                self.canvas.create_rectangle(
+                    current[0] * self.cell_size,
+                    current[1] * self.cell_size,
+                    (current[0] + 1) * self.cell_size,
+                    (current[1] + 1) * self.cell_size,
+                    fill="yellow",
+                )
+                self.canvas.update()  # Force update the canvas
+
+                if current == end:
+                    return  # End the search if the exit is reached
+
+                for direction in MOVE_DIRS.values():
+                    next_pos = (current[0] + direction[0], current[1] + direction[1])
+                    if (
+                        0 <= next_pos[0] < self.width
+                        and 0 <= next_pos[1] < self.height
+                        and self.maze[next_pos[1]][next_pos[0]] == 0
+                        and next_pos not in visited
+                    ):
+                        stack.append((next_pos, path + [next_pos]))
+
+                self.root.after(50, step)  # Schedule the next step
+
+        step()
+    
+    
