@@ -3,94 +3,98 @@ import random
 from collections import deque
 import heapq
 
-#Define the size of the maze 
-WIDTH = 31 #This must be an odd number 
-HEIGHT = 31 #This must be an odd number
+# Define the size of the maze
+WIDTH = 31  # Must be an odd number
+HEIGHT = 31  # Must be an odd number
 CELL_SIZE = 20
 
-#Directions for moving in the maze (right, left, down, up)
+# Directions for moving in the maze (right, left, down, up)
 DIRS = [(2, 0), (-2, 0), (0, 2), (0, -2)]
-MOVE_DIRS = {"Right": (1,0), "Left": (-1, 0), "Down": (0, 1), "Up": (0, -1)}
+MOVE_DIRS = {"Right": (1, 0), "Left": (-1, 0), "Down": (0, 1), "Up": (0, -1)}
+
 
 class MazeGame:
     """
     A class to represent a maze game with different pathfinding algorithms.
 
-    This class creates a maze, intializes a graphical user Interface (GUI) using Trinter, 
-    and provides various algorithms to find a path through the maze. It supports Depth-First Search (DFS), 
-    Breath-First Search (BFS), Dijkstra's Algorithm, and A* Algorithm for pathfinding. The player can move
-    within the maze using keyboard controls. 
+    This class creates a maze, initializes a graphical user interface (GUI) using Tkinter,
+    and provides various algorithms to find a path through the maze. It supports Depth-First Search (DFS),
+    Breadth-First Search (BFS), Dijkstra's Algorithm, and A* Algorithm for pathfinding. The player can move
+    within the maze using keyboard controls.
 
     Attributes:
         width (int): The width of the maze in cells.
         height (int): The height of the maze in cells.
         cell_size (int): The size of each cell in pixels.
         maze (list[list[int]]): 2D list representing the maze grid (0 for open path, 1 for wall).
-
+        player_pos (list[int]): The current position of the player in the maze.
+        visited (set[tuple[int, int]]): Set of visited positions during pathfinding.
+        root (tk.Tk): The main Tkinter window.
+        canvas (tk.Canvas): The canvas used to draw the maze and player.
+        dfs_button (tk.Button): Button to start Depth-First Search.
+        bfs_button (tk.Button): Button to start Breadth-First Search.
+        dijkstra_button (tk.Button): Button to start Dijkstra's Algorithm.
+        a_star_button (tk.Button): Button to start A* Algorithm.
     """
 
     def __init__(self, width, height, cell_size):
         """
-        Initializing the MazeGame class. 
+        Initializes the MazeGame class.
 
         Args:
             width (int): The width of the maze in cells.
             height (int): The height of the maze in cells.
             cell_size (int): The size of each cell in pixels.
 
-        Sets up the maze, GUI components, and initializes player position. 
+        Sets up the maze, GUI components, and initializes player position.
         """
-
         self.width = width
         self.height = height
         self.cell_size = cell_size
-        self.maze = self.create_maze() #Creating the maze
-        self.player_pos = [0, 1] #Starting position
-        self.visited = set() #Set to keep track of the visited positions
-        self.root = tk.TK() #Initialize the Tkinter root window
+        self.maze = self.create_maze()  # Create the maze
+        self.player_pos = [0, 1]  # Start position
+        self.visited = set()  # Set to keep track of visited positions
+        self.root = tk.Tk()  # Initialize the Tkinter root window
+        self.root.title("Maze algorithms solver")
         self.canvas = tk.Canvas(
             self.root,
-            width = self.width * self.cell_size,
-            height = self.height * self.cell_size,
-            bg = "black",
+            width=self.width * self.cell_size,
+            height=self.height * self.cell_size,
+            bg="black",
         )
-
-        #Creating and packing buttons for different pathfinding algorithms 
+        # Create and pack buttons for different pathfinding algorithms
         self.canvas.pack()
-        self.dfs_button = tk.Button(self.root, text="DFS", command = self.dfs_bot)
-        self.dfs_button.pack(side=tk.LEFT, padx = 5, pady = 5)
-        self.bfs_button = tk.Button(self.root, text="BFS", command = self.bfs_bot)
-        self.bfs_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+        self.dfs_button = tk.Button(self.root, text="DFS", command=self.dfs_bot)
+        self.dfs_button.pack(side=tk.LEFT, padx=5, pady=5)
+        self.bfs_button = tk.Button(self.root, text="BFS", command=self.bfs_bot)
+        self.bfs_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.dijkstra_button = tk.Button(
-            self.root, text = "Dijkstra", command=self.dijkstra_bot
+            self.root, text="Dijkstra", command=self.dijkstra_bot
         )
-        self.dijkstra_button.pack(side=tk.LEFT, padx = 5, pady = 5)
+        self.dijkstra_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.a_star_button = tk.Button(
-            self.root, text = "A* Algorithm", command = self.a_star_bot
+            self.root, text="A* Algorithm", command=self.a_star_bot
         )
-        self.a_star_button.pack(side=tk.LEFT, padx = 5, pady = 5)
-
-        #Drawing the maze and player on the canvas 
-        self.draw_maze() #Draw the maze on the canvas
-        self.draw_player() # Draw the player on the canvas 
-
-        #Bind key press events to move the player
+        self.a_star_button.pack(side=tk.LEFT, padx=5, pady=5)
+        # Draw the maze and player on the canvas
+        self.draw_maze()  # Draw the maze on the canvas
+        self.draw_player()  # Draw the player on the canvas
+        # Bind key press events to move the player
         self.root.bind("<KeyPress>", self.move_player)
-        self.root.mainloop() # Start the Tkinter event loop
-
+        self.root.mainloop()  # Start the Tkinter event loop
 
     def create_maze(self):
         """
         Generates a random maze using the Depth-First Search (DFS) algorithm.
 
         This method initializes a maze grid where all cells are initially walls. It then
-        uses a stack-based approach to create a path through the maze. The path is created 
-        by randomly selecting neighboring cells, marking them as part of the path, and 
+        uses a stack-based approach to create a path through the maze. The path is created
+        by randomly selecting neighboring cells, marking them as part of the path, and
         removing walls between cells. The maze is ensured to have an entrance and an exit.
 
         The resulting maze is a 2D list where:
-        - '0' represents a path. 
-        - '1' represents a wall. 
+        - `0` represents a path.
+        - `1` represents a wall.
 
         Returns:
             list[list[int]]: A 2D list representing the generated maze. Each cell in the maze
@@ -113,22 +117,19 @@ class MazeGame:
             - The maze is guaranteed to have at least one path from the entrance to the exit.
             - The `DIRS` variable should be defined elsewhere in the code, typically as a list of possible directions
               [(0, 1), (1, 0), (0, -1), (-1, 0)] representing right, down, left, and up, respectively.
-
         """
-
         maze = [
             [1 for _ in range(self.width)] for _ in range(self.height)
-        ] # Start with walls everywhere
-        stack = [(1,1)] # Stack to keep track of the current path
-        maze[1][1] = 0 #Starting point
+        ]  # Start with walls everywhere
+        stack = [(1, 1)]  # Stack to keep track of the current path
+        maze[1][1] = 0  # Starting point
 
         while stack:
-            x, y = stack[-1] #Get the current position
+            x, y = stack[-1]  # Get the current position
 
-            #Shuffle the directions to randomize the path
+            # Shuffle the directions to randomize the path
             random.shuffle(DIRS)
-
-            #Get the list of unvisited neighbors
+            # Get the list of unvisited neighbors
             neighbors = [
                 (x + dx, y + dy)
                 for dx, dy in DIRS
@@ -138,27 +139,28 @@ class MazeGame:
             ]
 
             if neighbors:
-                nx, ny = random.choice(neighbors) #Choose a random neighbor
-                stack.append((nx, ny)) #Add the neighbor to the stack
-                maze[ny][nx] = 0 #Mark the neighbor as a path
-                maze [ny - (ny - y) // 2][nx - (nx - x) // 2] #Remove all wall between cells
+                nx, ny = random.choice(neighbors)  # Choose a random neighbor
+                stack.append((nx, ny))  # Add the neighbor to the stack
+                maze[ny][nx] = 0  # Mark the neighbor as a path
+                maze[ny - (ny - y) // 2][
+                    nx - (nx - x) // 2
+                ] = 0  # Remove the wall between cells
             else:
-                stack.pop() #Backtrack if no unvisited neighbors
-        
-        #Ensuring there is a path from the start to the end
-        maze[1][0] = 0 #Entrace
-        maze[self.heigh - 2][self.width - 1] = 0 #Exit
+                stack.pop()  # Backtrack if no unvisited neighbors
+
+        # Ensure there is a path from the start to the end
+        maze[1][0] = 0  # Entrance
+        maze[self.height - 2][self.width - 1] = 0  # Exit
 
         return maze
-    
 
     def draw_maze(self):
         """
         Draws the generated maze onto the Tkinter canvas.
 
-        This method iterates over the 2D list representing the maze and draws each cell as a
-        rectangle on the canvas. The color of the rectangle is determined by whether the cell is
-        a path or a wall. The method also draws the entrance and exit of the maze with distinct colors.
+        This method iterates over the 2D list representing the maze and draws each cell as a rectangle on
+        the canvas. The color of the rectangle is determined by whether the cell is a path or a wall. The
+        method also draws the entrance and exit of the maze with distinct colors.
 
         The maze is visualized as follows:
         - `0` (path) is drawn in white.
@@ -182,48 +184,44 @@ class MazeGame:
         Notes:
             - The canvas is assumed to be initialized with dimensions large enough to accommodate the entire maze.
             - The entrance and exit rectangles are hardcoded to specific sizes and positions based on the cell size.
-
         """
-
         for y in range(len(self.maze)):
-            for x in range(len(self.maze)):
-                color = "white" if self.maze[y][x] == 0 else "black" #Path or wall
+            for x in range(len(self.maze[0])):
+                color = "white" if self.maze[y][x] == 0 else "black"  # Path or wall
                 self.canvas.create_rectangle(
                     x * self.cell_size,
                     y * self.cell_size,
                     (x + 1) * self.cell_size,
-                    (y + 1) * seld.cell_size,
+                    (y + 1) * self.cell_size,
                     fill=color,
                 )
-
-        #Draw the entrace
+        # Draw the entrance
         self.canvas.create_rectangle(
-            0, self.cell_size, self.cell_size, 2 * self.cell_size, fill = "green"
+            0, self.cell_size, self.cell_size, 2 * self.cell_size, fill="green"
         )
-
-        #Draw the exit
+        # Draw the exit
         self.canvas.create_rectangle(
             (self.width - 1) * self.cell_size,
             (self.height - 2) * self.cell_size,
             self.width * self.cell_size,
             (self.height - 1) * self.cell_size,
-            fill = "red",
+            fill="red",
         )
 
     def draw_player(self):
         """
-        Draws the player on the Tkinter canvas. 
+        Draws the player on the Tkinter canvas.
 
         This method places a visual representation of the player at the current position on the canvas.
-        The player is drawn as a blue rectangle, and it is tagged with "player" for easy identification and manipulation. 
+        The player is drawn as a blue rectangle, and is tagged with "player" for easy identification and manipulation.
 
         Process:
-            1. Retrieve the current position of the player from 'self.player_pos'.
-            2. Calculate the top-left and bottom-right coordinates of the rectangle representing the player based on the
-                player's position and the cell size. 
+            1. Retrieve the current position of the player from `self.player_pos`.
+            2. Calculate the top-left and bottom-right coordinates of the rectangle representing the player
+               based on the player's position and the cell size.
             3. Draw a blue rectangle at the calculated coordinates on the canvas.
-            4. Assign the tag "player" to the rectangle, which allows for easy manipulation or identification later. 
-        
+            4. Assign the tag "player" to the rectangle, which allows for easy manipulation or identification later.
+
         Canvas Coordinates:
             - The top-left corner of the player rectangle is calculated as `(x * self.cell_size, y * self.cell_size)`.
             - The bottom-right corner of the player rectangle is calculated as `((x + 1) * self.cell_size, (y + 1) * self.cell_size)`.
@@ -236,17 +234,15 @@ class MazeGame:
         Example:
             If `self.player_pos` is `[2, 3]` and `self.cell_size` is `20`, the player will be drawn as a blue rectangle
             from `(40, 60)` to `(60, 80)` on the canvas.
-
         """
-
         x, y = self.player_pos
         self.canvas.create_rectangle(
             x * self.cell_size,
             y * self.cell_size,
             (x + 1) * self.cell_size,
             (y + 1) * self.cell_size,
-            fill = "blue",
-            tags = "players",
+            fill="blue",
+            tags="player",
         )
 
     def move_player(self, event):
@@ -279,14 +275,12 @@ class MazeGame:
 
         Example:
             If the `event.keysym` is "Right" and `MOVE_DIRS` is set such that "Right" maps to `(1, 0)`, the player will move one cell to the right.
-        
         """
-
-        dx, dy = MOVE_DIRS.get(event.keysym, (0,0)) #Get the direction of movement
+        dx, dy = MOVE_DIRS.get(event.keysym, (0, 0))  # Get the direction of movement
         new_x = self.player_pos[0] + dx
         new_y = self.player_pos[1] + dy
 
-        #Check if the new position is within the bounds and is the path
+        # Check if the new position is within the bounds and is a path
         if (
             0 <= new_x < self.width
             and 0 <= new_y < self.height
@@ -307,7 +301,6 @@ class MazeGame:
                     fill="yellow",
                     font=("Helvetica", 24),
                 )
-
 
     def update_visited_paths(self):
         """
@@ -339,12 +332,11 @@ class MazeGame:
             these cells will be drawn with a "light green" color, and the player
             will be drawn with a "blue" color at its current position.
         """
-
         self.canvas.delete(
             "player"
         )  # Remove the player to redraw it on top if necessary
 
-         # First redraw all visited paths
+        # First redraw all visited paths
         for pos in self.visited:
             x, y = pos
             fill_color = "light green"
@@ -366,7 +358,6 @@ class MazeGame:
             fill="blue",
             tags="player",
         )
-
 
     def clear_search_paths(self):
         """
@@ -396,7 +387,6 @@ class MazeGame:
             method will clear those indications and reset the maze to its original state with
             white paths, green entrance, and red exit.
         """
-
         # Clear all yellow cells indicating the search paths
         for y in range(len(self.maze)):
             for x in range(len(self.maze[0])):
@@ -441,12 +431,10 @@ class MazeGame:
             Calling `dfs_bot()` will begin the DFS algorithm, updating the maze visualization
             with the path being explored and eventually finding the path to the exit if it exists.
         """
-
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.depth_first_search(start, end)
-
 
     def depth_first_search(self, start, end):
         """
@@ -483,7 +471,6 @@ class MazeGame:
             and the path will be visualized with yellow cells. If a path exists, it will be found
             and displayed.
         """
-
         stack = [(start, [start])]
         visited = set()
 
@@ -521,7 +508,6 @@ class MazeGame:
                 self.root.after(50, step)  # Schedule the next step
 
         step()
-    
 
     def bfs_bot(self):
         """
@@ -543,12 +529,10 @@ class MazeGame:
             Calling `bfs_bot()` will begin the BFS algorithm, updating the maze visualization
             with the path being explored and eventually finding the path to the exit if it exists.
         """
-
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.breadth_first_search(start, end)
-
 
     def breadth_first_search(self, start, end):
         """
@@ -580,7 +564,6 @@ class MazeGame:
             Calling `breadth_first_search((1, 1), (10, 10))` will perform BFS on the maze,
             visualizing the path exploration with light blue cells.
         """
-
         queue = deque([(start, [start])])
         visited = set()
 
@@ -619,7 +602,6 @@ class MazeGame:
 
         step()
 
-
     def dijkstra_bot(self):
         """
         Initiates Dijkstra's Algorithm to find the shortest path from the start to the exit in the maze.
@@ -641,13 +623,11 @@ class MazeGame:
             visualization with the path being explored and eventually finding the shortest path
             to the exit if it exists.
         """
-
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.dijkstra_algorithm(start, end)
 
-    
     def dijkstra_algorithm(self, start, end):
         """
         Performs Dijkstra's Algorithm to find the shortest path from `start` to `end` in the maze.
@@ -678,7 +658,6 @@ class MazeGame:
             Calling `dijkstra_algorithm((1, 1), (10, 10))` will perform Dijkstra's algorithm on
             the maze, visualizing the path exploration with orange cells.
         """
-
         heap = [(0, start, [start])]  # (cost, position, path)
         visited = set()
 
@@ -718,9 +697,8 @@ class MazeGame:
 
                 self.root.after(50, step)  # Schedule the next step
 
-        step()   
+        step()
 
-    
     def a_star_bot(self):
         """
         Initiates A* Algorithm to find the shortest path from the start to the exit in the maze.
@@ -741,13 +719,11 @@ class MazeGame:
             Calling `a_star_bot()` will begin the A* algorithm, updating the maze visualization
             with the path being explored and eventually finding the shortest path to the exit if it exists.
         """
-
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.a_star_algorithm(start, end)
 
-    
     def heuristic(self, a, b):
         """
         Computes the heuristic (Manhattan distance) between two points `a` and `b`.
@@ -765,9 +741,8 @@ class MazeGame:
         Example:
             Calling `heuristic((1, 1), (4, 5))` returns 7, which is the Manhattan distance between the two points.
         """
-
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
-    
+
     def a_star_algorithm(self, start, end):
         """
         Performs A* Algorithm to find the shortest path from `start` to `end` in the maze.
@@ -847,5 +822,5 @@ class MazeGame:
         step()
 
 
-#Run the Maze Game
-MazeGame (WIDTH, HEIGHT, CELL_SIZE)
+# Run the Maze Game
+MazeGame(WIDTH, HEIGHT, CELL_SIZE)
