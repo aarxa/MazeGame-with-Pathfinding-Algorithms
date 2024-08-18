@@ -524,7 +524,26 @@ class MazeGame:
     
 
     def bfs_bot(self):
+        """
+        Initiates Breadth-First Search (BFS) to find a path from the start to the exit in the maze.
 
+        This method clears any previous search paths from the canvas and then calls the
+        `breadth_first_search` method to begin the BFS process.
+
+        The search starts from the predefined starting point `(1, 1)` and aims to reach
+        the predefined exit point `(self.width - 1, self.height - 2)`. As the search progresses,
+        cells are painted to visually indicate the path being explored.
+
+        Notes:
+            - The method clears the canvas of previous search paths before initiating BFS.
+            - The start and end points are fixed for this implementation.
+            - The cells being visited are painted in light blue during the search.
+
+        Example:
+            Calling `bfs_bot()` will begin the BFS algorithm, updating the maze visualization
+            with the path being explored and eventually finding the path to the exit if it exists.
+        """
+        
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
