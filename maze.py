@@ -621,9 +621,64 @@ class MazeGame:
 
 
     def dijkstra_bot(self):
+        """
+        Initiates Dijkstra's Algorithm to find the shortest path from the start to the exit in the maze.
+
+        This method clears any previous search paths from the canvas and then calls the
+        `dijkstra_algorithm` method to begin the Dijkstra's search process.
+
+        The search starts from the predefined starting point `(1, 1)` and aims to reach
+        the predefined exit point `(self.width - 1, self.height - 2)`. As the search progresses,
+        cells are painted to visually indicate the path being explored.
+
+        Notes:
+            - The method clears the canvas of previous search paths before initiating Dijkstra's algorithm.
+            - The start and end points are fixed for this implementation.
+            - The cells being visited are painted in orange during the search.
+
+        Example:
+            Calling `dijkstra_bot()` will begin the Dijkstra's algorithm, updating the maze
+            visualization with the path being explored and eventually finding the shortest path
+            to the exit if it exists.
+        """
+
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.dijkstra_algorithm(start, end)
 
+    
+    def dijkstra_algorithm(self, start, end):
+        """
+        Performs Dijkstra's Algorithm to find the shortest path from `start` to `end` in the maze.
+
+        This method explores the maze using Dijkstra's algorithm to find the shortest path
+        from the `start` position to the `end` position. Each visited cell is painted in orange
+        to indicate the path being explored.
+
+        Parameters:
+            start (tuple): The starting position in the maze as (x, y).
+            end (tuple): The target position (exit) in the maze as (x, y).
+
+        Process:
+            1. Initialize a priority queue (heap) with the starting position and initial cost.
+            2. Maintain a set of visited positions to avoid revisiting cells.
+            3. Use a loop to process each position in the priority queue:
+                - Paint the current cell in orange and update the canvas.
+                - If the current position is the end, terminate the search.
+                - Otherwise, explore the neighboring cells and add them to the queue if they
+                  are valid and not visited.
+                - Schedule the next step in the search process using `root.after`.
+
+        Notes:
+            - The `step` function handles the search process and updates the canvas.
+            - The priority queue ensures that the shortest path is found efficiently.
+
+        Example:
+            Calling `dijkstra_algorithm((1, 1), (10, 10))` will perform Dijkstra's algorithm on
+            the maze, visualizing the path exploration with orange cells.
+        """
+        
+        heap = [(0, start, [start])]  # (cost, position, path)
+        visited = set()
             
