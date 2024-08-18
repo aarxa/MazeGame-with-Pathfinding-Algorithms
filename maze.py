@@ -845,3 +845,7 @@ class MazeGame:
                 self.root.after(50, step)  # Schedule the next step
 
         step()
+
+
+#Run the Maze Game
+MazeGame (WIDTH, HEIGHT, CELL_SIZE)
