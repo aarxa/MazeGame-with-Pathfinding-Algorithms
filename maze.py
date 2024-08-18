@@ -620,10 +620,10 @@ class MazeGame:
         step()
 
 
-        def dijkstra_bot(self):
-            self.clear_search_paths()
-            start = (1, 1)
-            end = (self.width - 1, self.height - 2)
-            self.dijkstra_algorithm(start, end)
-            
+    def dijkstra_bot(self):
+        self.clear_search_paths()
+        start = (1, 1)
+        end = (self.width - 1, self.height - 2)
+        self.dijkstra_algorithm(start, end)
+
             
