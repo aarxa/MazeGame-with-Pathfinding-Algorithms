@@ -678,7 +678,44 @@ class MazeGame:
             Calling `dijkstra_algorithm((1, 1), (10, 10))` will perform Dijkstra's algorithm on
             the maze, visualizing the path exploration with orange cells.
         """
-        
+
         heap = [(0, start, [start])]  # (cost, position, path)
         visited = set()
-            
+
+        def step():
+            if heap:
+                cost, current, path = heapq.heappop(heap)
+                if current in visited:
+                    self.root.after(50, step)
+                    return
+                visited.add(current)
+
+                # Paint the current cell
+                self.canvas.create_rectangle(
+                    current[0] * self.cell_size,
+                    current[1] * self.cell_size,
+                    (current[0] + 1) * self.cell_size,
+                    (current[1] + 1) * self.cell_size,
+                    fill="orange",
+                )
+                self.canvas.update()  # Force update the canvas
+
+                if current == end:
+                    return  # End the search if the exit is reached
+
+                for direction in MOVE_DIRS.values():
+                    next_pos = (current[0] + direction[0], current[1] + direction[1])
+                    if (
+                        0 <= next_pos[0] < self.width
+                        and 0 <= next_pos[1] < self.height
+                        and self.maze[next_pos[1]][next_pos[0]] == 0
+                        and next_pos not in visited
+                    ):
+                        heapq.heappush(
+                            heap,
+                            (cost + 1, next_pos, path + [next_pos]),
+                        )
+
+                self.root.after(50, step)  # Schedule the next step
+
+        step()   
