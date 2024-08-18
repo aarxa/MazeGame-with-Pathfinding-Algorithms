@@ -551,6 +551,36 @@ class MazeGame:
 
 
     def breadth_first_search(self, start, end):
+        """
+        Performs Breadth-First Search (BFS) to find a path from `start` to `end` in the maze.
+
+        This method explores the maze using BFS to find the shortest path from the
+        `start` position to the `end` position. Each visited cell is painted in light blue
+        to indicate the path being explored.
+
+        Parameters:
+            start (tuple): The starting position in the maze as (x, y).
+            end (tuple): The target position (exit) in the maze as (x, y).
+
+        Process:
+            1. Initialize a queue with the starting position and the current path.
+            2. Maintain a set of visited positions to avoid revisiting cells.
+            3. Use a loop to process each position in the queue:
+                - Paint the current cell in light blue and update the canvas.
+                - If the current position is the end, terminate the search.
+                - Otherwise, explore the neighboring cells and add them to the queue if they
+                  are valid and not visited.
+                - Schedule the next step in the search process using `root.after`.
+
+        Notes:
+            - The `step` function is used to manage the search process and update the canvas.
+            - The search continues until the exit is reached or all possible paths are explored.
+
+        Example:
+            Calling `breadth_first_search((1, 1), (10, 10))` will perform BFS on the maze,
+            visualizing the path exploration with light blue cells.
+        """
+
         queue = deque([(start, [start])])
         visited = set()
 
@@ -588,3 +618,12 @@ class MazeGame:
                 self.root.after(50, step)  # Schedule the next step
 
         step()
+
+
+        def dijkstra_bot(self):
+            self.clear_search_paths()
+            start = (1, 1)
+            end = (self.width - 1, self.height - 2)
+            self.dijkstra_algorithm(start, end)
+            
+            
