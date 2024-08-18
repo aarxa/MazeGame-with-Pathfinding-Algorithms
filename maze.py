@@ -719,3 +719,51 @@ class MazeGame:
                 self.root.after(50, step)  # Schedule the next step
 
         step()   
+
+    
+    def a_star_bot(self):
+        """
+        Initiates A* Algorithm to find the shortest path from the start to the exit in the maze.
+
+        This method clears any previous search paths from the canvas and then calls the
+        `a_star_algorithm` method to begin the A* search process.
+
+        The search starts from the predefined starting point `(1, 1)` and aims to reach
+        the predefined exit point `(self.width - 1, self.height - 2)`. As the search progresses,
+        cells are painted to visually indicate the path being explored.
+
+        Notes:
+            - The method clears the canvas of previous search paths before initiating A* algorithm.
+            - The start and end points are fixed for this implementation.
+            - The cells being visited are painted in purple during the search.
+
+        Example:
+            Calling `a_star_bot()` will begin the A* algorithm, updating the maze visualization
+            with the path being explored and eventually finding the shortest path to the exit if it exists.
+        """
+        
+        self.clear_search_paths()
+        start = (1, 1)
+        end = (self.width - 1, self.height - 2)
+        self.a_star_algorithm(start, end)
+
+    
+    def heuristic(self, a, b):
+        """
+        Computes the heuristic (Manhattan distance) between two points `a` and `b`.
+
+        Parameters:
+            a (tuple): The first point as (x, y).
+            b (tuple): The second point as (x, y).
+
+        Returns:
+            int: The Manhattan distance between points `a` and `b`.
+
+        Notes:
+            - The heuristic used is the Manhattan distance, which is suitable for grid-based pathfinding.
+
+        Example:
+            Calling `heuristic((1, 1), (4, 5))` returns 7, which is the Manhattan distance between the two points.
+        """
+
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
