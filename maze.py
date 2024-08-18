@@ -543,8 +543,48 @@ class MazeGame:
             Calling `bfs_bot()` will begin the BFS algorithm, updating the maze visualization
             with the path being explored and eventually finding the path to the exit if it exists.
         """
-        
+
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
         self.breadth_first_search(start, end)
+
+
+    def breadth_first_search(self, start, end):
+        queue = deque([(start, [start])])
+        visited = set()
+
+        def step():
+            if queue:
+                current, path = queue.popleft()
+                if current in visited:
+                    self.root.after(50, step)
+                    return
+                visited.add(current)
+
+                # Paint the current cell
+                self.canvas.create_rectangle(
+                    current[0] * self.cell_size,
+                    current[1] * self.cell_size,
+                    (current[0] + 1) * self.cell_size,
+                    (current[1] + 1) * self.cell_size,
+                    fill="light blue",
+                )
+                self.canvas.update()  # Force update the canvas
+
+                if current == end:
+                    return  # End the search if the exit is reached
+
+                for direction in MOVE_DIRS.values():
+                    next_pos = (current[0] + direction[0], current[1] + direction[1])
+                    if (
+                        0 <= next_pos[0] < self.width
+                        and 0 <= next_pos[1] < self.height
+                        and self.maze[next_pos[1]][next_pos[0]] == 0
+                        and next_pos not in visited
+                    ):
+                        queue.append((next_pos, path + [next_pos]))
+
+                self.root.after(50, step)  # Schedule the next step
+
+        step()
