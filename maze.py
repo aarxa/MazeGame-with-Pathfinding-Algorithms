@@ -802,3 +802,46 @@ class MazeGame:
         open_set = []
         heapq.heappush(open_set, (0 + self.heuristic(start, end), 0, start, [start]))
         visited = set()
+
+        def step():
+            if open_set:
+                _, cost, current, path = heapq.heappop(open_set)
+                if current in visited:
+                    self.root.after(50, step)
+                    return
+                visited.add(current)
+
+                # Paint the current cell
+                self.canvas.create_rectangle(
+                    current[0] * self.cell_size,
+                    current[1] * self.cell_size,
+                    (current[0] + 1) * self.cell_size,
+                    (current[1] + 1) * self.cell_size,
+                    fill="purple",
+                )
+                self.canvas.update()  # Force update the canvas
+
+                if current == end:
+                    return  # End the search if the exit is reached
+
+                for direction in MOVE_DIRS.values():
+                    next_pos = (current[0] + direction[0], current[1] + direction[1])
+                    if (
+                        0 <= next_pos[0] < self.width
+                        and 0 <= next_pos[1] < self.height
+                        and self.maze[next_pos[1]][next_pos[0]] == 0
+                        and next_pos not in visited
+                    ):
+                        heapq.heappush(
+                            open_set,
+                            (
+                                cost + 1 + self.heuristic(next_pos, end),
+                                cost + 1,
+                                next_pos,
+                                path + [next_pos],
+                            ),
+                        )
+
+                self.root.after(50, step)  # Schedule the next step
+
+        step()
