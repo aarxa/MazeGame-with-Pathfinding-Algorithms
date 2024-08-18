@@ -741,7 +741,7 @@ class MazeGame:
             Calling `a_star_bot()` will begin the A* algorithm, updating the maze visualization
             with the path being explored and eventually finding the shortest path to the exit if it exists.
         """
-        
+
         self.clear_search_paths()
         start = (1, 1)
         end = (self.width - 1, self.height - 2)
@@ -767,3 +767,38 @@ class MazeGame:
         """
 
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    
+    def a_star_algorithm(self, start, end):
+        """
+        Performs A* Algorithm to find the shortest path from `start` to `end` in the maze.
+
+        This method explores the maze using A* algorithm to find the shortest path from the
+        `start` position to the `end` position. Each visited cell is painted in purple to
+        indicate the path being explored.
+
+        Parameters:
+            start (tuple): The starting position in the maze as (x, y).
+            end (tuple): The target position (exit) in the maze as (x, y).
+
+        Process:
+            1. Initialize a priority queue (heap) with the starting position, initial cost,
+               and heuristic estimate.
+            2. Maintain a set of visited positions to avoid revisiting cells.
+            3. Use a loop to process each position in the priority queue:
+                - Paint the current cell in purple and update the canvas.
+                - If the current position is the end, terminate the search.
+                - Otherwise, explore the neighboring cells and add them to the queue if they
+                  are valid and not visited.
+                - Schedule the next step in the search process using `root.after`.
+
+        Notes:
+            - The heuristic used in A* is the Manhattan distance.
+            - The priority queue ensures that the algorithm efficiently finds the shortest path.
+
+        Example:
+            Calling `a_star_algorithm((1, 1), (10, 10))` will perform A* algorithm on the maze,
+            visualizing the path exploration with purple cells.
+        """
+        open_set = []
+        heapq.heappush(open_set, (0 + self.heuristic(start, end), 0, start, [start]))
+        visited = set()
